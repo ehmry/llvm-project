@@ -813,6 +813,26 @@ public:
   }
 };
 
+// Genode Target
+template <typename Target>
+class LLVM_LIBRARY_VISIBILITY GenodeTargetInfo : public OSTargetInfo<Target> {
+protected:
+  void getOSDefines(const LangOptions &Opts, const llvm::Triple &Triple,
+                    MacroBuilder &Builder) const override {
+    Builder.defineMacro("__GENODE__");
+    Builder.defineMacro("__ELF__");
+    // Required by the libc++ locale support.
+    if (Opts.CPlusPlus)
+      Builder.defineMacro("_GNU_SOURCE");
+  }
+
+public:
+  GenodeTargetInfo(const llvm::Triple &Triple, const TargetOptions &Opts)
+      : OSTargetInfo<Target>(Triple, Opts) {
+    this->MCountName = "__mcount";
+  }
+};
+
 // WebAssembly target
 template <typename Target>
 class LLVM_LIBRARY_VISIBILITY WebAssemblyOSTargetInfo
