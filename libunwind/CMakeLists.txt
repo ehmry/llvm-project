@@ -333,6 +333,11 @@ if (WIN32 AND LIBUNWIND_ENABLE_STATIC AND NOT LIBUNWIND_ENABLE_SHARED)
   add_definitions(-D_LIBUNWIND_DISABLE_VISIBILITY_ANNOTATIONS)
 endif()
 
+if (LIBUNWIND_IS_BAREMETAL)
+  add_definitions(-D_LIBUNWIND_IS_BAREMETAL)
+  add_definitions(-D_LIBUNWIND_SUPPORT_DWARF_UNWIND)
+endif()
+
 #===============================================================================
 # Setup Source Code
 #===============================================================================
