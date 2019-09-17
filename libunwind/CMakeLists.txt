@@ -380,6 +380,10 @@ if (LIBUNWIND_HAS_COMMENT_LIB_PRAGMA)
   if (LIBUNWIND_HAS_PTHREAD_LIB)
     add_definitions(-D_LIBUNWIND_LINK_PTHREAD_LIB)
   endif()
+
+if (LIBUNWIND_IS_BAREMETAL)
+  add_definitions(-D_LIBUNWIND_IS_BAREMETAL)
+  add_definitions(-D_LIBUNWIND_SUPPORT_DWARF_UNWIND)
 endif()
 
 #===============================================================================
