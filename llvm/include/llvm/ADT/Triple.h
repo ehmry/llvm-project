@@ -160,6 +160,7 @@ public:
     DragonFly,
     FreeBSD,
     Fuchsia,
+    Genode,
     IOS,
     KFreeBSD,
     Linux,
@@ -507,6 +508,8 @@ public:
   }
 
   bool isOSDragonFly() const { return getOS() == Triple::DragonFly; }
+
+  bool isOSGenode() const { return getOS() == Triple::Genode; }
 
   bool isOSSolaris() const {
     return getOS() == Triple::Solaris;
