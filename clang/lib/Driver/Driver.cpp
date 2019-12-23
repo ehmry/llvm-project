@@ -4849,7 +4849,7 @@ const ToolChain &Driver::getToolChain(const ArgList &Args,
       TC = std::make_unique<toolchains::Solaris>(*this, Target, Args);
       break;
     case llvm::Triple::Genode:
-      TC = llvm::make_unique<toolchains::Genode>(*this, Target, Args);
+      TC = std::make_unique<toolchains::Genode>(*this, Target, Args);
       break;
     case llvm::Triple::AMDHSA:
     case llvm::Triple::AMDPAL:
