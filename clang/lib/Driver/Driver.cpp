@@ -22,6 +22,7 @@
 #include "ToolChains/DragonFly.h"
 #include "ToolChains/FreeBSD.h"
 #include "ToolChains/Fuchsia.h"
+#include "ToolChains/Genode.h"
 #include "ToolChains/Gnu.h"
 #include "ToolChains/HIP.h"
 #include "ToolChains/Haiku.h"
@@ -4569,6 +4570,9 @@ const ToolChain &Driver::getToolChain(const ArgList &Args,
       break;
     case llvm::Triple::Solaris:
       TC = llvm::make_unique<toolchains::Solaris>(*this, Target, Args);
+      break;
+    case llvm::Triple::Genode:
+      TC = llvm::make_unique<toolchains::Genode>(*this, Target, Args);
       break;
     case llvm::Triple::AMDHSA:
       TC = llvm::make_unique<toolchains::AMDGPUToolChain>(*this, Target, Args);

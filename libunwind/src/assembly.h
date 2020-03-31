@@ -71,7 +71,7 @@
 #define HIDDEN_SYMBOL(name) .hidden name
 
 #if defined(__GNU__) || defined(__FreeBSD__) || defined(__Fuchsia__) || \
-    defined(__linux__)
+    defined(__linux__) || defined(__GENODE__)
 #define NO_EXEC_STACK_DIRECTIVE .section .note.GNU-stack,"",%progbits
 #else
 #define NO_EXEC_STACK_DIRECTIVE

@@ -62,6 +62,7 @@ static_library("Driver") {
     "ToolChains/DragonFly.cpp",
     "ToolChains/FreeBSD.cpp",
     "ToolChains/Fuchsia.cpp",
+    "ToolChains/Genode.cpp",
     "ToolChains/Gnu.cpp",
     "ToolChains/HIP.cpp",
     "ToolChains/Haiku.cpp",
