@@ -538,7 +538,7 @@ static bool useFramePointerForTargetByDefault(const ArgList &Args,
     break;
   }
 
-  if (Triple.isOSNetBSD()) {
+  if (Triple.isOSNetBSD() || Triple.isOSGenode()) {
     return !areOptimizationsEnabled(Args);
   }
 

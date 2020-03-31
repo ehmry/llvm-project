@@ -373,7 +373,7 @@ fp16_fml_fallthrough:
                                options::OPT_munaligned_access)) {
     if (A->getOption().matches(options::OPT_mno_unaligned_access))
       Features.push_back("+strict-align");
-  } else if (Triple.isOSOpenBSD())
+  } else if (Triple.isOSOpenBSD() || Triple.isOSGenode())
     Features.push_back("+strict-align");
 
   if (Args.hasArg(options::OPT_ffixed_x1))

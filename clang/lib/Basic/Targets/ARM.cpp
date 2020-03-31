@@ -238,18 +238,19 @@ ARMTargetInfo::ARMTargetInfo(const llvm::Triple &Triple,
       HW_FP(0) {
   bool IsOpenBSD = Triple.isOSOpenBSD();
   bool IsNetBSD = Triple.isOSNetBSD();
+  bool IsGenode = Triple.isOSGenode();
 
   // FIXME: the isOSBinFormatMachO is a workaround for identifying a Darwin-like
   // environment where size_t is `unsigned long` rather than `unsigned int`
 
   PtrDiffType = IntPtrType =
       (Triple.isOSDarwin() || Triple.isOSBinFormatMachO() || IsOpenBSD ||
-       IsNetBSD)
+       IsNetBSD || IsGenode)
           ? SignedLong
           : SignedInt;
 
   SizeType = (Triple.isOSDarwin() || Triple.isOSBinFormatMachO() || IsOpenBSD ||
-              IsNetBSD)
+              IsNetBSD || IsGenode)
                  ? UnsignedLong
                  : UnsignedInt;
 

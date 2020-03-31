@@ -921,7 +921,7 @@ typedef unsigned int   char32_t;
 
 #if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
 // Most unix variants have catopen.  These are the specific ones that don't.
-#  if !defined(__BIONIC__) && !defined(_NEWLIB_VERSION)
+#  if !defined(__BIONIC__) && !defined(_NEWLIB_VERSION) && !defined(__GENODE__)
 #    define _LIBCPP_HAS_CATOPEN 1
 #  endif
 #endif
@@ -1130,6 +1130,7 @@ _LIBCPP_FUNC_VIS extern "C" void __sanitizer_annotate_contiguous_container(
       defined(__APPLE__) || \
       defined(__CloudABI__) || \
       defined(__sun__) || \
+      defined(__GENODE__) || \
       (defined(__MINGW32__) && __has_include(<pthread.h>))
 #    define _LIBCPP_HAS_THREAD_API_PTHREAD
 #  elif defined(__Fuchsia__)
