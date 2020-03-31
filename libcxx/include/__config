@@ -1126,6 +1126,8 @@ _LIBCPP_FUNC_VIS extern "C" void __sanitizer_annotate_contiguous_container(
 #    define _LIBCPP_HAS_THREAD_API_PTHREAD
 #  elif defined(__Fuchsia__)
 #    define _LIBCPP_HAS_THREAD_API_C11
+#  elif defined(__Genode__)
+#    define _LIBCPP_HAS_NO_THREADS
 #  elif defined(_LIBCPP_WIN32API)
 #    define _LIBCPP_HAS_THREAD_API_WIN32
 #  else

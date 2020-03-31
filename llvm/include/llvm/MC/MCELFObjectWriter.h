@@ -74,6 +74,8 @@ public:
     switch (OSType) {
       case Triple::CloudABI:
         return ELF::ELFOSABI_CLOUDABI;
+      case Triple::Genode:
+        return ELF::ELFOSABI_GENODE;
       case Triple::HermitCore:
         return ELF::ELFOSABI_STANDALONE;
       case Triple::PS4:
