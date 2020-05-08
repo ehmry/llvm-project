@@ -74,9 +74,14 @@ void genode::Linker::ConstructJob(Compilation &C, const JobAction &JA,
   if (Args.hasArg(options::OPT_static)) {
     CmdArgs.push_back("-Bstatic");
   } else {
-    CmdArgs.push_back(Args.MakeArgString("-T" + D.SysRoot + "/ld/genode_dyn.ld"));
-    CmdArgs.push_back(Args.MakeArgString("--dynamic-list=" + D.SysRoot + "/ld/genode_dyn.dl"));
-    CmdArgs.push_back("--dynamic-linker=ld.lib.so");
+    if (Args.hasArg(options::OPT_shared)) {
+      CmdArgs.push_back(Args.MakeArgString("-shared"));
+      CmdArgs.push_back(Args.MakeArgString("-T" + D.SysRoot + "/ld/genode_rel.ld"));
+    } else {
+      CmdArgs.push_back(Args.MakeArgString("-T" + D.SysRoot + "/ld/genode_dyn.ld"));
+      CmdArgs.push_back(Args.MakeArgString("--dynamic-list=" + D.SysRoot + "/ld/genode_dyn.dl"));
+      CmdArgs.push_back("--dynamic-linker=ld.lib.so");
+    }
     if (!Args.hasArg(options::OPT_nostdlib, options::OPT_nodefaultlibs)) {
       CmdArgs.push_back("-l:ld.lib.so");
     }
@@ -93,7 +98,9 @@ void genode::Linker::ConstructJob(Compilation &C, const JobAction &JA,
 
   if (!Args.hasArg(options::OPT_nostdlib, options::OPT_nodefaultlibs, options::OPT_noposix)) {
     CmdArgs.push_back("-lc");
-    CmdArgs.push_back("-lposix");
+    if (!Args.hasArg(options::OPT_shared)) {
+      CmdArgs.push_back("-lposix");
+    }
   }
 
   const char *Exec = Args.MakeArgString(ToolChain.GetLinkerPath());
