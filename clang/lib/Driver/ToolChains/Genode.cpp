@@ -30,7 +30,7 @@ using path_list = SmallVector<std::string, 16>;
 
 
 /// Resolve library name to absolute path.
-static void AddAbsoluteLibrary(const Driver &D, const llvm::opt::ArgList &Args, llvm::opt::ArgStringList &CmdArgs, const path_list &LibPaths, StringRef Name) {
+static bool AddAbsoluteLibrary(const Driver &D, const llvm::opt::ArgList &Args, llvm::opt::ArgStringList &CmdArgs, const path_list &LibPaths, StringRef Name) {
   if (Name.front() == '/') {
     CmdArgs.push_back(Args.MakeArgString(Name));
   } else {
@@ -42,11 +42,12 @@ static void AddAbsoluteLibrary(const Driver &D, const llvm::opt::ArgList &Args, 
       llvm::sys::fs::real_path(Path, RealPath);
       if (llvm::sys::fs::exists(RealPath.str())) {
         CmdArgs.push_back(Args.MakeArgString(RealPath));
-        return;
+        return true;
       }
     }
   }
-  D.Diag(diag::err_drv_genode_unresolved_shared) << Name;
+  D.Diag(diag::warn_drv_genode_unresolved_shared) << Name;
+  return false;
 }
 
 
@@ -136,12 +137,13 @@ void genode::Linker::ConstructJob(Compilation &C, const JobAction &JA,
 
       if (A.getOption().matches(options::OPT_l)) {
         SmallString<128> LibName(A.getValue());
-        if (LibName.length() == 1) {
+        if (LibName.str().size() == 1) {
           LibName = SmallString<128>("lib");
           LibName.append(A.getValue());
         }
         LibName.append(".lib.so");
-        AddAbsoluteLibrary(D, Args, CmdArgs, LibPaths, LibName);
+        if (!AddAbsoluteLibrary(D, Args, CmdArgs, LibPaths, LibName))
+          A.renderAsInput(Args, CmdArgs);
       } else {
         A.renderAsInput(Args, CmdArgs);
       }
