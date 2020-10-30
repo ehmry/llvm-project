@@ -13,16 +13,42 @@
 #include "CommonArgs.h"
 #include "clang/Driver/Compilation.h"
 #include "clang/Driver/Driver.h"
+#include "clang/Driver/DriverDiagnostic.h"
 #include "clang/Driver/Options.h"
 #include "llvm/ADT/SmallString.h"
 #include "llvm/Option/ArgList.h"
 #include "llvm/Support/Path.h"
+#include "llvm/Support/FileSystem.h"
 
 using namespace clang::driver;
 using namespace clang::driver::tools;
 using namespace clang::driver::toolchains;
 using namespace clang;
 using namespace llvm::opt;
+
+using path_list = SmallVector<std::string, 16>;
+
+
+/// Resolve library name to absolute path.
+static void AddAbsoluteLibrary(const Driver &D, const llvm::opt::ArgList &Args, llvm::opt::ArgStringList &CmdArgs, const path_list &LibPaths, StringRef Name) {
+  if (Name.front() == '/') {
+    CmdArgs.push_back(Args.MakeArgString(Name));
+  } else {
+    for (const auto &LibPath : LibPaths) {
+      if(LibPath.length() < 1) continue;
+      SmallString<256> RealPath;
+      SmallString<256> Path(LibPath);
+      llvm::sys::path::append(Path, Name);
+      llvm::sys::fs::real_path(Path, RealPath);
+      if (llvm::sys::fs::exists(RealPath.str())) {
+        CmdArgs.push_back(Args.MakeArgString(RealPath));
+        return;
+      }
+    }
+  }
+  D.Diag(diag::err_drv_genode_unresolved_shared) << Name;
+}
+
 
 void genode::Linker::ConstructJob(Compilation &C, const JobAction &JA,
                                   const InputInfo &Output,
@@ -94,14 +120,39 @@ void genode::Linker::ConstructJob(Compilation &C, const JobAction &JA,
     assert(Output.isNothing() && "Invalid output.");
   }
 
-  AddLinkerInputs(ToolChain, Inputs, Args, CmdArgs, JA);
+  SmallVector<std::string, 16> LibPaths;
+  for (const auto &LibPath : Args.getAllArgValues(options::OPT_L))
+    LibPaths.push_back(LibPath);
+  for (const auto &LibPath : getToolChain().getLibraryPaths())
+    LibPaths.push_back(LibPath);
+  for (const auto &LibPath : getToolChain().getFilePaths())
+    LibPaths.push_back(LibPath);
+
+  for (const auto &Input : Inputs) {
+    if (Input.isFilename()) {
+      CmdArgs.push_back(Input.getFilename());
+    } else {
+      const Arg &A = Input.getInputArg();
+
+      if (A.getOption().matches(options::OPT_l)) {
+        SmallString<128> LibName(A.getValue());
+        if (LibName.length() == 1) {
+          LibName = SmallString<128>("lib");
+          LibName.append(A.getValue());
+        }
+        LibName.append(".lib.so");
+        AddAbsoluteLibrary(D, Args, CmdArgs, LibPaths, LibName);
+      } else {
+        A.renderAsInput(Args, CmdArgs);
+      }
+    }
+  }
 
   if (!Args.hasArg(options::OPT_nostdlib, options::OPT_nodefaultlibs, options::OPT_noposix)) {
     AddRunTimeLibs(ToolChain, D, CmdArgs, Args);
-
-    CmdArgs.push_back("-lc");
+    AddAbsoluteLibrary(D, Args, CmdArgs, LibPaths, "libc.lib.so");
     if (!Args.hasArg(options::OPT_shared)) {
-      CmdArgs.push_back("-lposix");
+      AddAbsoluteLibrary(D, Args, CmdArgs, LibPaths, "posix.lib.so");
     }
   }
 

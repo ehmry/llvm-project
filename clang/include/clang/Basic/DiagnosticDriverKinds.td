@@ -425,4 +425,5 @@ def warn_drv_msp430_hwmult_no_device : Warning<"no MCU device specified, but "
   "specify a MSP430 device, or -mhwmult to set hardware multiply type "
   "explicitly.">, InGroup<InvalidCommandLineArgument>;
 
+def err_drv_genode_unresolved_shared : Error<"could not resolve location of '%0' for linker">;
 }
