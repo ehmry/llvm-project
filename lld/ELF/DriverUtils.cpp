@@ -194,14 +194,16 @@ std::string elf::createResponseFile(const opt::InputArgList &Args) {
 // Find a file by concatenating given paths. If a resulting path
 // starts with "=", the character is replaced with a --sysroot value.
 static Optional<std::string> findFile(StringRef Path1, const Twine &Path2) {
-  SmallString<128> S;
+  SmallString<256> S;
   if (Path1.startswith("="))
     path::append(S, Config->Sysroot, Path1.substr(1), Path2);
   else
     path::append(S, Path1, Path2);
 
-  if (fs::exists(S))
-    return S.str().str();
+  SmallString<256> RealPath;
+  fs::real_path(S, RealPath);
+  if (fs::exists(RealPath))
+    return RealPath.str().str();
   return None;
 }
 
@@ -220,8 +222,19 @@ Optional<std::string> elf::searchLibrary(StringRef Name) {
 
   for (StringRef Dir : Config->SearchPaths) {
     if (!Config->Static)
-      if (Optional<std::string> S = findFile(Dir, "lib" + Name + ".so"))
-        return S;
+      if (Name.size() == 1) {
+        if (Optional<std::string> S = findFile(Dir, "lib" + Name + ".lib.so"))
+          return S;
+        if (Optional<std::string> S = findFile(Dir, "lib" + Name + ".so"))
+          return S;
+      } else {
+        if (Optional<std::string> S = findFile(Dir, Name + ".lib.so"))
+          return S;
+        if (Optional<std::string> S = findFile(Dir, "lib" + Name + ".so"))
+          return S;
+      }
+    if (Optional<std::string> S = findFile(Dir, Name + ".lib.a"))
+      return S;
     if (Optional<std::string> S = findFile(Dir, "lib" + Name + ".a"))
       return S;
   }
