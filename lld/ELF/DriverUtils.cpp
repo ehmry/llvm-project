@@ -228,8 +228,19 @@ Optional<std::string> elf::findFromSearchPaths(StringRef path) {
 Optional<std::string> elf::searchLibraryBaseName(StringRef name) {
   for (StringRef dir : config->searchPaths) {
     if (!config->isStatic)
-      if (Optional<std::string> s = findFile(dir, "lib" + name + ".so"))
-        return s;
+      if (name.size() == 1) {
+        if (Optional<std::string> s = findFile(dir, "lib" + name + ".lib.so"))
+          return s;
+        if (Optional<std::string> s = findFile(dir, "lib" + name + ".so"))
+          return s;
+      } else {
+        if (Optional<std::string> s = findFile(dir, name + ".lib.so"))
+          return s;
+        if (Optional<std::string> s = findFile(dir, "lib" + name + ".so"))
+          return s;
+      }
+    if (Optional<std::string> s = findFile(dir, name + ".lib.a"))
+      return s;
     if (Optional<std::string> s = findFile(dir, "lib" + name + ".a"))
       return s;
   }
