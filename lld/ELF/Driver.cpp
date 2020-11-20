@@ -254,12 +254,8 @@ void LinkerDriver::addFile(StringRef path, bool withLOption) {
     // file has a DT_SONAME or not because we haven't parsed it yet.
     // Here, we set the default soname for the file because we might
     // need it later.
-    //
-    // If a file was specified by -lfoo, the directory part is not
-    // significant, as a user did not specify it. This behavior is
-    // compatible with GNU.
     files.push_back(
-        make<SharedFile>(mbref, withLOption ? path::filename(path) : path));
+        make<SharedFile>(mbref, path));
     return;
   case file_magic::bitcode:
   case file_magic::elf_relocatable:

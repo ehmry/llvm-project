@@ -205,14 +205,16 @@ std::string elf::createResponseFile(const opt::InputArgList &args) {
 // Find a file by concatenating given paths. If a resulting path
 // starts with "=", the character is replaced with a --sysroot value.
 static Optional<std::string> findFile(StringRef path1, const Twine &path2) {
-  SmallString<128> s;
+  SmallString<256> s;
   if (path1.startswith("="))
     path::append(s, config->sysroot, path1.substr(1), path2);
   else
     path::append(s, path1, path2);
 
-  if (fs::exists(s))
-    return std::string(s);
+  SmallString<256> RealPath;
+  fs::real_path(s, RealPath);
+  if (fs::exists(RealPath))
+    return RealPath.str().str();
   return None;
 }
 
