@@ -475,6 +475,18 @@ public:
   }
 };
 
+class LLVM_LIBRARY_VISIBILITY GenodeI386TargetInfo
+    : public GenodeTargetInfo<X86_32TargetInfo> {
+public:
+  GenodeI386TargetInfo(const llvm::Triple &Triple, const TargetOptions &Opts)
+      : GenodeTargetInfo<X86_32TargetInfo>(Triple, Opts) {
+    SizeType = UnsignedLong;
+    IntPtrType = SignedLong;
+    PtrDiffType = SignedLong;
+  }
+};
+
+
 class LLVM_LIBRARY_VISIBILITY DarwinI386TargetInfo
     : public DarwinTargetInfo<X86_32TargetInfo> {
 public:

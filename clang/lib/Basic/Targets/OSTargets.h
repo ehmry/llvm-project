@@ -890,6 +890,40 @@ public:
   }
 };
 
+// Genode Target
+template <typename Target>
+class LLVM_LIBRARY_VISIBILITY GenodeTargetInfo : public OSTargetInfo<Target> {
+protected:
+  void getOSDefines(const LangOptions &Opts, const llvm::Triple &Triple,
+                    MacroBuilder &Builder) const override {
+    Builder.defineMacro("__GENODE__");
+    DefineStd(Builder, "unix", Opts);
+    Builder.defineMacro("__ELF__");
+    if (Opts.POSIXThreads)
+      Builder.defineMacro("_REENTRANT");
+    if (this->HasFloat128)
+      Builder.defineMacro("__FLOAT128__");
+  }
+
+public:
+  GenodeTargetInfo(const llvm::Triple &Triple, const TargetOptions &Opts)
+      : OSTargetInfo<Target>(Triple, Opts) {
+    this->IntMaxType = TargetInfo::SignedLongLong;
+    this->Int64Type = TargetInfo::SignedLongLong;
+    this->SizeType = TargetInfo::UnsignedLong;
+    this->TLSSupported = false;
+    switch (Triple.getArch()) {
+    default:
+      break;
+    case llvm::Triple::x86:
+    case llvm::Triple::x86_64:
+      this->HasFloat128 = true;
+      break;
+    }
+
+  }
+};
+
 // WebAssembly target
 template <typename Target>
 class LLVM_LIBRARY_VISIBILITY WebAssemblyOSTargetInfo

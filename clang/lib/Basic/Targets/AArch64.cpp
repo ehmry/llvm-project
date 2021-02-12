@@ -43,7 +43,7 @@ const Builtin::Info AArch64TargetInfo::BuiltinInfo[] = {
 AArch64TargetInfo::AArch64TargetInfo(const llvm::Triple &Triple,
                                      const TargetOptions &Opts)
     : TargetInfo(Triple), ABI("aapcs") {
-  if (getTriple().isOSOpenBSD()) {
+  if (getTriple().isOSOpenBSD() || getTriple().isOSGenode()) {
     Int64Type = SignedLongLong;
     IntMaxType = SignedLongLong;
   } else {

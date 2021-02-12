@@ -142,6 +142,8 @@ TargetInfo *AllocateTarget(const llvm::Triple &Triple,
       return new FreeBSDTargetInfo<AArch64leTargetInfo>(Triple, Opts);
     case llvm::Triple::Fuchsia:
       return new FuchsiaTargetInfo<AArch64leTargetInfo>(Triple, Opts);
+    case llvm::Triple::Genode:
+      return new GenodeTargetInfo<AArch64leTargetInfo>(Triple, Opts);
     case llvm::Triple::Linux:
       return new LinuxTargetInfo<AArch64leTargetInfo>(Triple, Opts);
     case llvm::Triple::NetBSD:
@@ -186,6 +188,8 @@ TargetInfo *AllocateTarget(const llvm::Triple &Triple,
       return new LinuxTargetInfo<ARMleTargetInfo>(Triple, Opts);
     case llvm::Triple::FreeBSD:
       return new FreeBSDTargetInfo<ARMleTargetInfo>(Triple, Opts);
+    case llvm::Triple::Genode:
+      return new GenodeTargetInfo<ARMleTargetInfo>(Triple, Opts);
     case llvm::Triple::NetBSD:
       return new NetBSDTargetInfo<ARMleTargetInfo>(Triple, Opts);
     case llvm::Triple::OpenBSD:
@@ -499,6 +503,8 @@ TargetInfo *AllocateTarget(const llvm::Triple &Triple,
       return new FreeBSDTargetInfo<X86_32TargetInfo>(Triple, Opts);
     case llvm::Triple::Fuchsia:
       return new FuchsiaTargetInfo<X86_32TargetInfo>(Triple, Opts);
+    case llvm::Triple::Genode:
+      return new GenodeI386TargetInfo(Triple, Opts);
     case llvm::Triple::KFreeBSD:
       return new KFreeBSDTargetInfo<X86_32TargetInfo>(Triple, Opts);
     case llvm::Triple::Minix:
@@ -575,6 +581,8 @@ TargetInfo *AllocateTarget(const llvm::Triple &Triple,
     }
     case llvm::Triple::Haiku:
       return new HaikuTargetInfo<X86_64TargetInfo>(Triple, Opts);
+    case llvm::Triple::Genode:
+      return new GenodeTargetInfo<X86_64TargetInfo>(Triple, Opts);
     case llvm::Triple::NaCl:
       return new NaClTargetInfo<X86_64TargetInfo>(Triple, Opts);
     case llvm::Triple::PS4:
