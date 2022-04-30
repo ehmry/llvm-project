@@ -40,6 +40,8 @@
 # include <support/musl/xlocale.h>
 #elif defined(_LIBCPP_HAS_MUSL_LIBC)
 # include <support/musl/xlocale.h>
+#elif defined(__GENODE__)
+# include <support/genode/xlocale.h>
 #endif
 
 #if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
